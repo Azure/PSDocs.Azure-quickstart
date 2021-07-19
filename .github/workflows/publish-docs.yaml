@@ -1,0 +1,66 @@
+#
+# Publish workflow
+#
+
+# Notes:
+# This workflow dynamically generates and published Azure template documentation.
+# We recommend pre-creating the Azure Web App and then setting the following secrets before continuing.
+
+# Setup:
+# You need to configure the following secrets for GitHub Actions:
+# - AZURE_CREDENTIALS - See https://github.com/azure/login#configure-deployment-credentials for details.
+# - DOCS_LOCATION - The Azure region/ location of the Web App.
+# - DOCS_NAME - The name of the Azure App Service Web App. This must be unique.
+# - DOCS_RESOURCE_GROUP - The name of the resource group containing the web app.
+# - DOCS_SUBSCRIPTION - The name or id of the subscription to use for deploying the web app.
+
+name: Publish docs
+
+on:
+- push
+- workflow_dispatch
+
+jobs:
+  publish:
+    name: Publish (MkDocs)
+    if: github.repository != 'Azure/PSDocs.Azure-quickstart'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      # Run PSDocs for Azure
+      - name: Generate docs
+        uses: microsoft/ps-docs@main
+        with:
+          conventions: AddMkDocsMeta
+          modules: PSDocs,PSDocs.Azure
+          outputPath: docs/azure/templates/
+          prerelease: true
+
+      # Configure Python and MkDocs
+      - name: Setup Python
+        uses: actions/setup-python@v2.2.2
+        with:
+          python-version: '3.9'
+          architecture: 'x64'
+
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install wheel
+          python3 -m pip install -r requirements-docs.txt
+
+      # Convert markdown to HTML with MkDocs
+      - name: Build site
+        run: mkdocs build
+
+      # Deploy to Azure Web App
+      - name: Azure Login
+        uses: azure/login@v1.1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Publish to Azure
+        run: |
+          cd ./site
+          az webapp up -l ${{ secrets.DOCS_LOCATION }} -n '${{ secrets.DOCS_NAME }}' -g '${{ secrets.DOCS_RESOURCE_GROUP }}' --subscription '${{ secrets.DOCS_SUBSCRIPTION }}' --html
