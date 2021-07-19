@@ -1,0 +1,33 @@
+site_name: Contoso Docs for Azure
+site_url: https://docs.contoso.com/
+site_description: Azure documentation for Contoso's modern cloud environment.
+
+repo_url: https://github.com/Azure/PSDocs.Azure/
+edit_uri: ''
+
+theme:
+  language: en
+  name: material
+  font:
+    text: Roboto
+  palette:
+    primary: black
+  icon:
+    repo: fontawesome/brands/github
+    logo: material/microsoft-azure
+  features:
+  - navigation.instant
+  - navigation.indexes
+  - navigation.sections:
+      level: 1
+  - navigation.tabs
+
+markdown_extensions:
+  - toc:
+      permalink: '#'
+      separator: '-'
+
+plugins:
+- search
+- git-revision-date
+- awesome-pages
