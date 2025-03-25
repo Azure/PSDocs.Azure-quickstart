@@ -56,7 +56,7 @@ jobs:
 
       # Deploy to Azure Web App
       - name: Azure Login
-        uses: azure/login@v1.5.1
+        uses: azure/login@v2.2.0
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
