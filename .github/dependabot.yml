@@ -17,6 +17,8 @@ updates:
   - 'ci-quality'
   reviewers:
   - 'azure/psdocs-azure'
+  cooldown:
+    default-days: 7
 
 # Maintain dependencies for Python
 - package-ecosystem: 'pip'
