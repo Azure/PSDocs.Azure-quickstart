@@ -30,7 +30,7 @@ jobs:
 
       # Run PSDocs for Azure
       - name: Generate docs
-        uses: microsoft/ps-docs@main
+        uses: microsoft/ps-docs@ee5be06004b44e2f66a8a46e92f1150b233f23bc # v0.1.0
         with:
           conventions: AddMkDocsMeta
           modules: PSDocs,PSDocs.Azure
